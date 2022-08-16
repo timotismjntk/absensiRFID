@@ -1,29 +1,46 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useCallback} from 'react';
-import {StatusBar, StyleSheet, Text, TextInput, View} from 'react-native';
+import React, {useState, useCallback, useEffect} from 'react';
+import {
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  Alert,
+  View,
+} from 'react-native';
 import {RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {windowWidth} from '../../utils';
 
-import {setUser} from '../../store/reducer/auth';
+import {loginPengguna, clearStatePengguna} from '../../store/reducer/auth';
+import LoadingModal from '../../components/LoadingModal';
 
 export default function Login() {
   const dispatch = useDispatch();
   const [NIK, setNIK] = useState('');
 
   const login = useCallback(() => {
-    if (NIK === '1234567890') {
-      dispatch(setUser({NIK}));
-    } else {
-      console.log('NIK salah');
-    }
+    dispatch(loginPengguna(NIK));
   }, [NIK]);
+
+  const {pengguna, isLoadingPengguna} = useSelector(state => state.auth);
+
+  useEffect(() => {
+    if (pengguna?.status === 'gagal') {
+      Alert.alert('Gagal', pengguna.pesan || '', [
+        {text: 'OK', onPress: () => dispatch(clearStatePengguna())},
+      ]);
+    }
+  }, [pengguna]);
+
+  console.log(pengguna);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} translucent backgroundColor="transparent" />
+      {/* <LoadingModal open={isLoadingPengguna} close={() => null} /> */}
       <View style={styles.wrapper}>
         <Text style={styles.headerTitle}>
           Sistem Informasi Absensi{'\n'}Elektronik Sekolah

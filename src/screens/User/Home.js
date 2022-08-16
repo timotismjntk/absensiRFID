@@ -7,14 +7,14 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import {windowWidth, windowHeight} from '../../utils';
 
-import {deleteUser} from '../../store/reducer/auth';
+import {logoutPengguna} from '../../store/reducer/auth';
 
 export default function Home({navigation}) {
   const dispatch = useDispatch();
-  const {user} = useSelector(state => state.auth);
+  const {pengguna} = useSelector(state => state.auth);
 
   const logout = useCallback(() => {
-    dispatch(deleteUser());
+    dispatch(logoutPengguna());
   }, []);
 
   return (
@@ -22,9 +22,11 @@ export default function Home({navigation}) {
       <StatusBar animated={true} translucent backgroundColor="transparent" />
       <View style={styles.wrapper}>
         <View style={styles.fotoUser} />
-        <Text style={styles.namaUser}>{user?.nama || 'John Doe'}</Text>
+        <Text style={styles.namaUser}>
+          {pengguna?.result?.nama || 'Memuat...'}
+        </Text>
         <Text style={styles.nikUser}>
-          NIK: {user?.nikUser || '111111111111'}
+          NIK: {pengguna?.result?.nik || 'Memuat...'}
         </Text>
         <RectButton
           onPress={() => navigation.navigate('LogAbsen')}

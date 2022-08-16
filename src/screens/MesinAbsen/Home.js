@@ -7,13 +7,13 @@ import {useDispatch} from 'react-redux';
 
 import {windowWidth, windowHeight} from '../../utils';
 
-import {deleteAccessCode} from '../../store/reducer/auth';
+import {logoutMesinAbsen} from '../../store/reducer/auth';
 
 export default function Home({navigation}) {
   const dispatch = useDispatch();
 
   const logout = useCallback(() => {
-    dispatch(deleteAccessCode());
+    dispatch(logoutMesinAbsen());
   }, []);
 
   const pilihAbsen = useCallback(value => {

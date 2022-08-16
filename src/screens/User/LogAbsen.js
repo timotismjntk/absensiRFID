@@ -16,8 +16,26 @@ export default function LogAbsen({navigation}) {
       <View style={styles.wrapper}>
         <View style={styles.flatlistWrapper}>
           <FlatList
-            data={Array.from({length: 10})}
-            renderItem={({item}) => <View style={styles.item} />}
+            data={Array.from({length: 10}, (_, index) => {
+              return {
+                hari: `Senin, ${index + 1} Agustus 2022`,
+                masuk: '07:03',
+                pulang: '14:06',
+              };
+            })}
+            renderItem={({item}) => (
+              <View style={styles.item}>
+                <Text style={styles.itemHari}>{item?.hari}</Text>
+                <View style={styles.itemMasukPulangWrapper}>
+                  <Text style={styles.itemMasukPulang}>
+                    masuk: {item?.masuk}
+                  </Text>
+                  <Text style={styles.itemMasukPulang}>
+                    Pulang: {item?.pulang}
+                  </Text>
+                </View>
+              </View>
+            )}
             contentContainerStyle={styles.flatlist}
           />
         </View>
@@ -60,6 +78,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D9',
     borderRadius: windowWidth * 0.03,
     marginBottom: '4%',
+    paddingHorizontal: '3%',
+    paddingVertical: '2%',
+  },
+  itemHari: {
+    fontSize: windowWidth * 0.035,
+    fontFamily: 'OpenSans-Bold',
+    color: 'black',
+  },
+  itemMasukPulangWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  itemMasukPulang: {
+    fontSize: windowWidth * 0.035,
+    fontFamily: 'OpenSans-Regular',
+    color: 'black',
   },
   button: {
     backgroundColor: '#E3A400',

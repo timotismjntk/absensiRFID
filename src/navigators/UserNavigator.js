@@ -39,9 +39,9 @@ export default function UserNavigator() {
     },
   };
   // call accesscode stored in mmkv storage
-  const {user} = useSelector(state => state.auth);
+  const {pengguna} = useSelector(state => state.auth);
 
-  if (user && Object.keys(user)?.length > 0) {
+  if (pengguna?.status === 'berhasil') {
     return (
       <Stack.Navigator>
         <Stack.Screen

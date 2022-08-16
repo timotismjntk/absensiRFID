@@ -1,23 +1,67 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from 'react';
-import {StatusBar, StyleSheet, Text, TextInput, View} from 'react-native';
+import React, {useEffect, useMemo} from 'react';
+import {Linking, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {FlatList, RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {windowWidth} from '../../utils';
 
-import {setUser} from '../../store/reducer/auth';
+import {getInformasiSingkat} from '../../store/reducer/informasiSingkat';
 
 export default function InformasiSingkat({navigation}) {
+  const dispatch = useDispatch();
+  const {pengguna} = useSelector(state => state.auth);
+  const {
+    informasiSingkat: {result: informasiSingkat},
+    isLoadingInformasiSingkat,
+  } = useSelector(state => state.informasiSingkat);
+
+  useEffect(() => {
+    if (pengguna?.result?.website_id?.length > 0) {
+      dispatch(getInformasiSingkat(pengguna?.result?.website_id));
+    }
+  }, [pengguna]);
+
+  const memoizedValue = useMemo(() => {
+    if (informasiSingkat?.length > 0) {
+      return informasiSingkat;
+    } else {
+      return [];
+    }
+  }, [informasiSingkat]);
+
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.container}>
       <StatusBar animated={true} translucent backgroundColor="transparent" />
       <View style={styles.wrapper}>
         <View style={styles.flatlistWrapper}>
           <FlatList
-            data={Array.from({length: 10})}
-            renderItem={({item}) => <View style={styles.item} />}
+            data={memoizedValue}
+            ListEmptyComponent={
+              <Text style={styles.emptyData}>Informasi tidak ditemukan...</Text>
+            }
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            onRefresh={() => {
+              dispatch(getInformasiSingkat(pengguna?.result?.website_id));
+            }}
+            refreshing={isLoadingInformasiSingkat}
+            renderItem={({item}) => {
+              return (
+                <RectButton
+                  onPress={() => {
+                    if (item?.url?.length > 0) {
+                      Linking.openURL(item?.url);
+                    }
+                  }}
+                  style={styles.item}>
+                  <Text style={styles.itemHari}>
+                    {item?.haritanggal_formated}
+                  </Text>
+                  <Text style={styles.itemKonten}>{item?.cuplikan}</Text>
+                </RectButton>
+              );
+            }}
             contentContainerStyle={styles.flatlist}
           />
         </View>
@@ -55,11 +99,31 @@ const styles = StyleSheet.create({
     padding: '4%',
     paddingVertical: '7%',
   },
+  emptyData: {
+    fontSize: windowWidth * 0.03,
+    fontFamily: 'OpenSans-Regular',
+    color: 'black',
+  },
   item: {
-    height: windowWidth * 0.12,
-    backgroundColor: '#D9D9D9',
-    borderRadius: windowWidth * 0.03,
+    minHeight: windowWidth * 0.12,
     marginBottom: '4%',
+    borderBottomWidth: windowWidth * 0.0012,
+    paddingBottom: '3%',
+  },
+  separator: {
+    height: '0.2%',
+    backgroundColor: 'black',
+    marginVertical: '2%',
+  },
+  itemHari: {
+    fontSize: windowWidth * 0.035,
+    fontFamily: 'OpenSans-Bold',
+    color: 'black',
+  },
+  itemKonten: {
+    fontSize: windowWidth * 0.03,
+    fontFamily: 'OpenSans-Regular',
+    color: 'black',
   },
   button: {
     backgroundColor: '#E3A400',

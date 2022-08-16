@@ -1,23 +1,73 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from 'react';
-import {StatusBar, StyleSheet, Text, TextInput, View} from 'react-native';
+import React, {useEffect, useMemo} from 'react';
+import {StatusBar, StyleSheet, Text, Linking, View} from 'react-native';
 import {FlatList, RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
-import {windowWidth} from '../../utils';
+import {windowWidth, windowHeight} from '../../utils';
 
-import {setUser} from '../../store/reducer/auth';
+import {getBeritaSekolah} from '../../store/reducer/beritaSekolah';
 
 export default function BeritaSekolah({navigation}) {
+  const dispatch = useDispatch();
+  const {pengguna} = useSelector(state => state.auth);
+  const {
+    beritaSekolah: {result: berita},
+    isLoadingBeritaSekolah,
+  } = useSelector(state => state.beritaSekolah);
+
+  useEffect(() => {
+    if (pengguna?.result?.website_id?.length > 0) {
+      dispatch(getBeritaSekolah(pengguna?.result?.website_id));
+    }
+  }, [pengguna]);
+
+  const memoizedValue = useMemo(() => {
+    if (berita?.length > 0) {
+      return berita;
+    } else {
+      return [];
+    }
+  }, [berita]);
+
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.container}>
       <StatusBar animated={true} translucent backgroundColor="transparent" />
       <View style={styles.wrapper}>
         <View style={styles.flatlistWrapper}>
           <FlatList
-            data={Array.from({length: 10})}
-            renderItem={({item}) => <View style={styles.item} />}
+            data={memoizedValue}
+            ListEmptyComponent={
+              <Text style={styles.emptyData}>Berita tidak ditemukan...</Text>
+            }
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            onRefresh={() => {
+              dispatch(getBeritaSekolah(pengguna?.result?.website_id));
+            }}
+            refreshing={isLoadingBeritaSekolah}
+            renderItem={({item}) => {
+              return (
+                <RectButton
+                  onPress={() => {
+                    if (item?.url?.length > 0) {
+                      Linking.openURL(item?.url);
+                    }
+                  }}
+                  style={styles.item}>
+                  <Text
+                    numberOfLines={3}
+                    ellipsizeMode="tail"
+                    style={styles.itemJudul}>
+                    {item?.judul}
+                  </Text>
+                  <Text style={styles.itemHari}>
+                    {item?.haritanggal_formated}
+                  </Text>
+                  <Text style={styles.itemKonten}>{item?.cuplikan}</Text>
+                </RectButton>
+              );
+            }}
             contentContainerStyle={styles.flatlist}
           />
         </View>
@@ -52,14 +102,41 @@ const styles = StyleSheet.create({
   },
   flatlist: {
     backgroundColor: 'white',
-    padding: '4%',
-    paddingVertical: '7%',
+    padding: '2%',
+    paddingTop: '5%',
+    paddingBottom: '15%',
+    minHeight: windowHeight * 0.8,
+  },
+  emptyData: {
+    fontSize: windowWidth * 0.03,
+    fontFamily: 'OpenSans-Regular',
+    color: 'black',
   },
   item: {
-    height: windowWidth * 0.12,
-    backgroundColor: '#D9D9D9',
-    borderRadius: windowWidth * 0.03,
-    marginBottom: '4%',
+    minHeight: windowWidth * 0.12,
+    paddingHorizontal: '2%',
+  },
+  separator: {
+    height: '0.2%',
+    backgroundColor: 'black',
+    marginVertical: '2%',
+  },
+  itemJudul: {
+    fontSize: windowWidth * 0.035,
+    fontFamily: 'OpenSans-Bold',
+    color: 'black',
+    marginBottom: '1%',
+  },
+  itemHari: {
+    fontSize: windowWidth * 0.028,
+    fontFamily: 'OpenSans-Italic',
+    color: 'black',
+    marginBottom: '1%',
+  },
+  itemKonten: {
+    fontSize: windowWidth * 0.03,
+    fontFamily: 'OpenSans-Regular',
+    color: 'black',
   },
   button: {
     backgroundColor: '#E3A400',

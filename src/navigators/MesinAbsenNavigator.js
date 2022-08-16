@@ -37,9 +37,9 @@ export default function MesinAbsenNavigator() {
     },
   };
   // call accesscode stored in mmkv storage
-  const {accessCode} = useSelector(state => state.auth);
+  const {mesinAbsen} = useSelector(state => state.auth);
 
-  if (accessCode?.length > 0) {
+  if (mesinAbsen?.status === 'berhasil') {
     return (
       <Stack.Navigator>
         <Stack.Screen
