@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  createStackNavigator,
-  HeaderStyleInterpolators,
-  TransitionSpecs,
-} from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 import {useSelector} from 'react-redux';
 
 // import User screens
@@ -14,38 +10,24 @@ import BeritaSekolah from '../screens/User/BeritaSekolah';
 import InformasiSingkat from '../screens/User/InformasiSingkat';
 
 const Stack = createStackNavigator();
+import {horizontalTransition} from '../utils';
 
 export default function UserNavigator() {
-  const horizontalTransition = {
-    gestureDirection: 'horizontal',
-    transitionSpec: {
-      open: TransitionSpecs.TransitionIOSSpec,
-      close: TransitionSpecs.TransitionIOSSpec,
-    },
-    headerStyleInterpolator: HeaderStyleInterpolators.forFade,
-    cardStyleInterpolator: ({current, layouts}) => {
-      return {
-        cardStyle: {
-          transform: [
-            {
-              translateX: current.progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [layouts.screen.width, 0],
-              }),
-            },
-          ],
-        },
-      };
-    },
-  };
   // call accesscode stored in mmkv storage
-  const {pengguna} = useSelector(state => state.auth);
+  const {pengguna, isLoginUserModalSuccessOpen} = useSelector(
+    state => state.auth,
+  );
 
-  if (pengguna?.status === 'berhasil') {
+  if (pengguna?.status === 'berhasil' && !isLoginUserModalSuccessOpen) {
     return (
       <Stack.Navigator>
         <Stack.Screen
-          options={{...horizontalTransition, headerShown: false}}
+          options={{
+            ...horizontalTransition,
+            headerTitle: '',
+            headerTransparent: true,
+            headerTintColor: 'white',
+          }}
           name="HomeUser"
           component={HomeUser}
           lazy={true}

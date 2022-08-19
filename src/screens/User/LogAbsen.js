@@ -1,42 +1,70 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from 'react';
-import {StatusBar, StyleSheet, Text, TextInput, View} from 'react-native';
-import {FlatList, RectButton} from 'react-native-gesture-handler';
+import React, {useEffect, useMemo} from 'react';
+import {StatusBar, StyleSheet, Text, View, FlatList} from 'react-native';
+import {RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
-import {windowWidth} from '../../utils';
+import {windowWidth, windowHeight} from '../../utils';
 
-import {setUser} from '../../store/reducer/auth';
+import {getLogAbsen} from '../../store/reducer/logAbsen';
 
 export default function LogAbsen({navigation}) {
+  const dispatch = useDispatch();
+  const {pengguna} = useSelector(state => state.auth);
+  const {
+    logAbsen: {result: logAbsen},
+    isLoadingLogAbsen,
+  } = useSelector(state => state.logAbsen);
+
+  useEffect(() => {
+    if (pengguna?.result?.siswa_id?.length > 0) {
+      dispatch(getLogAbsen(pengguna?.result?.siswa_id));
+    }
+  }, [pengguna]);
+
+  const memoizedValue = useMemo(() => {
+    if (logAbsen?.length > 0) {
+      return logAbsen;
+    } else {
+      return [];
+    }
+  }, [logAbsen]);
+
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.container}>
       <StatusBar animated={true} translucent backgroundColor="transparent" />
       <View style={styles.wrapper}>
         <View style={styles.flatlistWrapper}>
           <FlatList
-            data={Array.from({length: 10}, (_, index) => {
-              return {
-                hari: `Senin, ${index + 1} Agustus 2022`,
-                masuk: '07:03',
-                pulang: '14:06',
-              };
-            })}
+            data={memoizedValue}
+            ListEmptyComponent={
+              <Text style={styles.emptyData}>Log Absen tidak ditemukan...</Text>
+            }
+            refreshing={isLoadingLogAbsen}
+            onRefresh={() => {
+              dispatch(getLogAbsen(pengguna?.result?.siswa_id));
+            }}
             renderItem={({item}) => (
               <View style={styles.item}>
-                <Text style={styles.itemHari}>{item?.hari}</Text>
+                <Text style={styles.itemHari}>
+                  {item?.haritanggal_formated}
+                </Text>
                 <View style={styles.itemMasukPulangWrapper}>
                   <Text style={styles.itemMasukPulang}>
-                    masuk: {item?.masuk}
+                    masuk: {item?.absen_masuk}
                   </Text>
                   <Text style={styles.itemMasukPulang}>
-                    Pulang: {item?.pulang}
+                    Pulang: {item?.absen_pulang}
                   </Text>
                 </View>
               </View>
             )}
-            contentContainerStyle={styles.flatlist}
+            contentContainerStyle={[
+              styles.flatlist,
+              {paddingBottom: memoizedValue?.length > 28 ? '40%' : '25%'},
+            ]}
           />
         </View>
         <RectButton onPress={() => navigation.goBack()} style={styles.button}>
@@ -68,18 +96,29 @@ const styles = StyleSheet.create({
     borderRadius: windowWidth * 0.05,
     overflow: 'hidden',
   },
+  emptyData: {
+    fontSize: windowWidth * 0.03,
+    fontFamily: 'OpenSans-Regular',
+    color: 'black',
+  },
   flatlist: {
     backgroundColor: 'white',
     padding: '4%',
     paddingVertical: '7%',
+    minHeight: windowHeight,
+  },
+  separator: {
+    height: '0.2%',
+    backgroundColor: 'white',
+    marginVertical: '2%',
   },
   item: {
-    height: windowWidth * 0.12,
+    minHeight: windowWidth * 0.12,
     backgroundColor: '#D9D9D9',
     borderRadius: windowWidth * 0.03,
-    marginBottom: '4%',
     paddingHorizontal: '3%',
     paddingVertical: '2%',
+    marginBottom: '3%',
   },
   itemHari: {
     fontSize: windowWidth * 0.035,

@@ -1,13 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {StatusBar, StyleSheet, Text, Image, View} from 'react-native';
 import {RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import LoadingModal from '../../components/LoadingModal';
 
 import {windowWidth, windowHeight} from '../../utils';
 
-import {logoutMesinAbsen} from '../../store/reducer/auth';
+import {
+  logoutMesinAbsen,
+  clearFailedAbsenFromDb,
+  clearStatusFailedAbsen,
+  scanRFID,
+} from '../../store/reducer/auth';
 
 export default function Home({navigation}) {
   const dispatch = useDispatch();
@@ -15,14 +21,30 @@ export default function Home({navigation}) {
   const logout = useCallback(() => {
     dispatch(logoutMesinAbsen());
   }, []);
+  const [loading, setLoading] = useState(false);
 
   const pilihAbsen = useCallback(value => {
     navigation.navigate('RFID', {jenis_absen: value});
   }, []);
 
+  const {dataAbsenGagal} = useSelector(state => state.auth);
+
+  useEffect(() => {
+    if (dataAbsenGagal?.length > 0) {
+      setLoading(true);
+      dataAbsenGagal.forEach(item => {
+        dispatch(scanRFID(item));
+      });
+      dispatch(clearFailedAbsenFromDb());
+      dispatch(clearStatusFailedAbsen());
+      setLoading(false);
+    }
+  }, [dataAbsenGagal]);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} translucent backgroundColor="transparent" />
+      <LoadingModal open={loading} close={() => null} />
       <RectButton onPress={logout} style={styles.logoutButton}>
         <Text style={styles.logoutTitle}>Logout</Text>
         <View style={styles.iconLogout}>
@@ -85,7 +107,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     position: 'absolute',
-    top: windowHeight * 0.07,
+    top: windowHeight * 0.05,
     right: windowHeight * 0.02,
     padding: '2%',
   },

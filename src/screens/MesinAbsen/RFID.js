@@ -13,7 +13,12 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import {windowWidth, windowHeight} from '../../utils';
 
-import {clearMulaiAbsen, scanRFID} from '../../store/reducer/auth';
+import {
+  clearMulaiAbsen,
+  scanRFID,
+  saveToDbAbsenFailed,
+  clearStatusFailedAbsen,
+} from '../../store/reducer/auth';
 import LoadingModal from '../../components/LoadingModal';
 
 export default function RFID({route}) {
@@ -21,20 +26,20 @@ export default function RFID({route}) {
   const inputRef = useRef(null);
   const [rfidCode, setRfidCode] = useState('');
   const [clock, setClock] = useState('');
-  const {mesinAbsen, mulaiAbsen, isLoadingMulaiAbsen} = useSelector(
-    state => state.auth,
-  );
+  const {mesinAbsen, mulaiAbsen, isLoadingMulaiAbsen, failedAbsen} =
+    useSelector(state => state.auth);
 
-  const sendRfidCode = () => {
+  const sendRfidCode = useCallback(() => {
     dispatch(
       scanRFID({
         kode_akses: mesinAbsen?.result?.kode_akses,
-        jenis_absen: route?.params?.jenis_absen?.split(' ').join('') || '',
+        jenis_absen: route?.params?.jenis_absen || '',
         rfid: rfidCode,
       }),
     );
     inputRef?.current?.clear();
-  };
+    setRfidCode('');
+  }, [mesinAbsen, route?.params, rfidCode]);
 
   const customJam = useCallback(() => {
     const detik = new Date().getSeconds();
@@ -72,6 +77,24 @@ export default function RFID({route}) {
       dispatch(clearMulaiAbsen());
     }
   }, [mulaiAbsen]);
+
+  useEffect(() => {
+    if (failedAbsen) {
+      dispatch(
+        saveToDbAbsenFailed({
+          kode_akses: mesinAbsen?.result?.kode_akses,
+          jenis_absen: route?.params?.jenis_absen || '',
+          rfid: rfidCode,
+        }),
+      );
+      dispatch(clearStatusFailedAbsen());
+    }
+  }, [
+    failedAbsen,
+    mesinAbsen?.result?.kode_akses,
+    route?.params?.jenis_absen,
+    rfidCode,
+  ]);
 
   return (
     <SafeAreaView edges={['bottom', 'right', 'left']} style={styles.container}>

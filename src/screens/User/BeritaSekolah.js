@@ -1,7 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useMemo} from 'react';
-import {StatusBar, StyleSheet, Text, Linking, View} from 'react-native';
-import {FlatList, RectButton} from 'react-native-gesture-handler';
+import {
+  StatusBar,
+  FlatList,
+  StyleSheet,
+  Text,
+  Linking,
+  View,
+} from 'react-native';
+import {RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -41,6 +48,7 @@ export default function BeritaSekolah({navigation}) {
             ListEmptyComponent={
               <Text style={styles.emptyData}>Berita tidak ditemukan...</Text>
             }
+            progressViewOffset={-windowHeight * 0.03}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
             onRefresh={() => {
               dispatch(getBeritaSekolah(pengguna?.result?.website_id));

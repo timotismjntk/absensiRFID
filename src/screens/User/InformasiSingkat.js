@@ -1,11 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useMemo} from 'react';
-import {Linking, StatusBar, StyleSheet, Text, View} from 'react-native';
-import {FlatList, RectButton} from 'react-native-gesture-handler';
+import {
+  Linking,
+  StatusBar,
+  StyleSheet,
+  FlatList,
+  Text,
+  View,
+} from 'react-native';
+import {RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {windowWidth} from '../../utils';
+import {windowWidth, windowHeight} from '../../utils';
 
 import {getInformasiSingkat} from '../../store/reducer/informasiSingkat';
 
@@ -46,6 +53,7 @@ export default function InformasiSingkat({navigation}) {
               dispatch(getInformasiSingkat(pengguna?.result?.website_id));
             }}
             refreshing={isLoadingInformasiSingkat}
+            progressViewOffset={-windowHeight * 0.03}
             renderItem={({item}) => {
               return (
                 <RectButton
@@ -58,7 +66,7 @@ export default function InformasiSingkat({navigation}) {
                   <Text style={styles.itemHari}>
                     {item?.haritanggal_formated}
                   </Text>
-                  <Text style={styles.itemKonten}>{item?.cuplikan}</Text>
+                  <Text style={styles.itemKonten}>{item?.informasi}</Text>
                 </RectButton>
               );
             }}

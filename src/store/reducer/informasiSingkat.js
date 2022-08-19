@@ -9,7 +9,7 @@ const initialState = {
 export const getInformasiSingkat = createAsyncThunk(
   'informasiSingkat/getInformasiSingkat',
   async website_id => {
-    const {data} = await http().get(`gettInformasi?website_id=${website_id}`);
+    const {data} = await http().get(`getInformasi?website_id=${website_id}`);
     return data;
   },
 );

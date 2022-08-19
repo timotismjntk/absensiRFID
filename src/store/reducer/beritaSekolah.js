@@ -31,6 +31,7 @@ const beritaSekolahSlicer = createSlice({
       return {
         ...state,
         isLoadingBeritaSekolah: true,
+        beritaSekolah: {},
       };
     },
     [getBeritaSekolah.fulfilled]: (state, {payload}) => {

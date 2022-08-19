@@ -11,11 +11,16 @@ import {
 import {RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
+import LoadingModal from '../../components/LoadingModal';
+import SuccessModal from '../../components/SuccessModal';
 
 import {windowWidth} from '../../utils';
 
-import {loginPengguna, clearStatePengguna} from '../../store/reducer/auth';
-import LoadingModal from '../../components/LoadingModal';
+import {
+  loginPengguna,
+  clearStatePengguna,
+  showModalSuccess,
+} from '../../store/reducer/auth';
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -25,22 +30,35 @@ export default function Login() {
     dispatch(loginPengguna(NIK));
   }, [NIK]);
 
-  const {pengguna, isLoadingPengguna} = useSelector(state => state.auth);
+  const {pengguna, isLoadingPengguna, isLoginUserModalSuccessOpen} =
+    useSelector(state => state.auth);
 
   useEffect(() => {
     if (pengguna?.status === 'gagal') {
       Alert.alert('Gagal', pengguna.pesan || '', [
         {text: 'OK', onPress: () => dispatch(clearStatePengguna())},
       ]);
+    } else if (pengguna?.status === 'berhasil') {
+      dispatch(showModalSuccess({from: 'pengguna', value: true}));
     }
   }, [pengguna]);
 
-  console.log(pengguna);
+  useEffect(() => {
+    if (pengguna?.status === 'berhasil' && isLoginUserModalSuccessOpen) {
+      setTimeout(() => {
+        dispatch(showModalSuccess({from: 'pengguna', value: false}));
+      }, 3000);
+    }
+  }, [pengguna, isLoginUserModalSuccessOpen]);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} translucent backgroundColor="transparent" />
-      {/* <LoadingModal open={isLoadingPengguna} close={() => null} /> */}
+      <LoadingModal open={isLoadingPengguna} close={() => null} />
+      <SuccessModal
+        open={pengguna?.status === 'berhasil' && isLoginUserModalSuccessOpen}
+        close={() => null}
+      />
       <View style={styles.wrapper}>
         <Text style={styles.headerTitle}>
           Sistem Informasi Absensi{'\n'}Elektronik Sekolah
@@ -51,7 +69,6 @@ export default function Login() {
             autoFocus
             style={styles.input}
             // placeholder="Masukkan Kode Akses"
-            secureTextEntry
             value={NIK}
             onChangeText={setNIK}
             onSubmitEditing={login}

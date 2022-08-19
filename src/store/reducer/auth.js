@@ -6,9 +6,13 @@ const initialState = {
   mesinAbsen: {},
   isLoadingMesinAbsen: false,
   mulaiAbsen: {},
+  failedAbsen: false,
+  dataAbsenGagal: [],
   isLoadingMulaiAbsen: false,
   pengguna: {},
   isLoadingPengguna: false,
+  isLoginUserModalSuccessOpen: true,
+  isLoginMesinModalSuccessOpen: true,
 };
 
 export const loginMesinAbsen = createAsyncThunk(
@@ -38,6 +42,7 @@ const authSlicer = createSlice({
       return {
         ...state,
         mesinAbsen: {},
+        isLoginMesinModalSuccessOpen: true,
       };
     },
     clearStateMesinAbsen: (state, action) => {
@@ -45,6 +50,40 @@ const authSlicer = createSlice({
         ...state,
         mesinAbsen: {},
         isLoadingMesinAbsen: false,
+      };
+    },
+    showModalSuccess: (state, {payload}) => {
+      if (payload.from === 'pengguna') {
+        return {
+          ...state,
+          isLoginUserModalSuccessOpen: payload.value || false,
+        };
+      } else {
+        return {
+          ...state,
+          isLoginMesinModalSuccessOpen: payload.value || false,
+        };
+      }
+    },
+    saveToDbAbsenFailed: (state, {payload}) => {
+      return {
+        ...state,
+        dataAbsenGagal: [
+          ...state.dataAbsenGagal,
+          state.dataAbsenGagal.filter(item => item.rfid !== payload.rfid),
+        ],
+      };
+    },
+    clearFailedAbsenFromDb: state => {
+      return {
+        ...state,
+        dataAbsenGagal: [],
+      };
+    },
+    clearStatusFailedAbsen: state => {
+      return {
+        ...state,
+        failedAbsen: false,
       };
     },
     clearMulaiAbsen: (state, action) => {
@@ -58,6 +97,7 @@ const authSlicer = createSlice({
       return {
         ...state,
         pengguna: {},
+        isLoginUserModalSuccessOpen: true,
       };
     },
     clearStatePengguna: (state, action) => {
@@ -73,6 +113,7 @@ const authSlicer = createSlice({
       return {
         ...state,
         isLoadingMesinAbsen: true,
+        isLoginMesinModalSuccessOpen: true,
       };
     },
     [loginMesinAbsen.fulfilled]: (state, {payload}) => {
@@ -86,12 +127,14 @@ const authSlicer = createSlice({
       return {
         ...state,
         isLoadingMesinAbsen: false,
+        isLoginMesinModalSuccessOpen: false,
       };
     },
     [scanRFID.pending]: state => {
       return {
         ...state,
         isLoadingMulaiAbsen: true,
+        failedAbsen: true,
       };
     },
     [scanRFID.fulfilled]: (state, {payload}) => {
@@ -105,12 +148,14 @@ const authSlicer = createSlice({
       return {
         ...state,
         isLoadingMulaiAbsen: false,
+        failedAbsen: true,
       };
     },
     [loginPengguna.pending]: state => {
       return {
         ...state,
         isLoadingPengguna: true,
+        isLoginUserModalSuccessOpen: true,
       };
     },
     [loginPengguna.fulfilled]: (state, {payload}) => {
@@ -124,6 +169,7 @@ const authSlicer = createSlice({
       return {
         ...state,
         isLoadingPengguna: false,
+        isLoginUserModalSuccessOpen: false,
       };
     },
   },
@@ -136,6 +182,10 @@ export const {
   clearMulaiAbsen,
   logoutPengguna,
   clearStatePengguna,
+  showModalSuccess,
+  saveToDbAbsenFailed,
+  clearFailedAbsenFromDb,
+  clearStatusFailedAbsen,
 } = authSlicer.actions;
 
 export default authSlicer.reducer;

@@ -12,10 +12,15 @@ import {RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 import LoadingModal from '../../components/LoadingModal';
+import SuccessModal from '../../components/SuccessModal';
 
 import {windowWidth} from '../../utils';
 
-import {loginMesinAbsen, clearStateMesinAbsen} from '../../store/reducer/auth';
+import {
+  loginMesinAbsen,
+  clearStateMesinAbsen,
+  showModalSuccess,
+} from '../../store/reducer/auth';
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -25,15 +30,26 @@ export default function Login() {
     dispatch(loginMesinAbsen(accessCode));
   }, [accessCode]);
 
-  const {mesinAbsen, isLoadingMesinAbsen} = useSelector(state => state.auth);
+  const {mesinAbsen, isLoadingMesinAbsen, isLoginMesinModalSuccessOpen} =
+    useSelector(state => state.auth);
 
   useEffect(() => {
     if (mesinAbsen?.status === 'gagal') {
       Alert.alert('Gagal', mesinAbsen.pesan || '', [
         {text: 'OK', onPress: () => dispatch(clearStateMesinAbsen())},
       ]);
+    } else if (mesinAbsen?.status === 'berhasil') {
+      dispatch(showModalSuccess({from: 'mesin', value: true}));
     }
   }, [mesinAbsen]);
+
+  useEffect(() => {
+    if (mesinAbsen?.status === 'berhasil' && isLoginMesinModalSuccessOpen) {
+      setTimeout(() => {
+        dispatch(showModalSuccess({from: 'mesin', value: false}));
+      }, 3000);
+    }
+  }, [mesinAbsen, isLoginMesinModalSuccessOpen]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -41,6 +57,10 @@ export default function Login() {
       <LoadingModal
         open={isLoadingMesinAbsen}
         close={() => dispatch(clearStateMesinAbsen())}
+      />
+      <SuccessModal
+        open={mesinAbsen?.status === 'berhasil' && isLoginMesinModalSuccessOpen}
+        close={() => null}
       />
       <View style={styles.wrapper}>
         <Text style={styles.headerTitle}>

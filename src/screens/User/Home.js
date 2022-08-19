@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useCallback} from 'react';
-import {StatusBar, StyleSheet, Text, Linking, View} from 'react-native';
+import {StatusBar, StyleSheet, Text, Linking, View, Image} from 'react-native';
 import {RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
@@ -21,12 +21,17 @@ export default function Home({navigation}) {
     <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.container}>
       <StatusBar animated={true} translucent backgroundColor="transparent" />
       <View style={styles.wrapper}>
-        <View style={styles.fotoUser} />
+        <View style={styles.fotoWrapper}>
+          <Image
+            style={styles.fotoUser}
+            source={{uri: pengguna?.result?.url_foto}}
+          />
+        </View>
         <Text style={styles.namaUser}>
           {pengguna?.result?.nama || 'Memuat...'}
         </Text>
         <Text style={styles.nikUser}>
-          NIK: {pengguna?.result?.nik || 'Memuat...'}
+          NIK: {pengguna?.result?.nisn_nik || 'Memuat...'}
         </Text>
         <RectButton
           onPress={() => navigation.navigate('LogAbsen')}
@@ -44,7 +49,7 @@ export default function Home({navigation}) {
           <Text style={styles.btnTitle}>Informasi Singkat</Text>
         </RectButton>
         <RectButton
-          onPress={() => Linking.openURL('https://google.com')}
+          onPress={() => Linking.openURL(pengguna?.result?.url_website)}
           style={styles.btn}>
           <Text style={styles.btnTitle}>Kunjungi Website Sekolah</Text>
         </RectButton>
@@ -68,12 +73,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: windowWidth * 0.15,
     alignItems: 'center',
   },
-  fotoUser: {
+  fotoWrapper: {
     borderRadius: (windowWidth * 0.28) / 2,
     backgroundColor: 'white',
     width: windowWidth * 0.28,
     height: windowWidth * 0.28,
     marginBottom: '6%',
+    overflow: 'hidden',
+  },
+  fotoUser: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   namaUser: {
     fontSize: windowWidth * 0.055,

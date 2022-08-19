@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  createStackNavigator,
-  HeaderStyleInterpolators,
-  TransitionSpecs,
-} from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 import {useSelector} from 'react-redux';
 
 // import Wisata screens
@@ -12,38 +8,24 @@ import LoginMesinAbsen from '../screens/MesinAbsen/Login';
 import RFIDMesinAbsen from '../screens/MesinAbsen/RFID';
 
 const Stack = createStackNavigator();
+import {horizontalTransition} from '../utils';
 
 export default function MesinAbsenNavigator() {
-  const horizontalTransition = {
-    gestureDirection: 'horizontal',
-    transitionSpec: {
-      open: TransitionSpecs.TransitionIOSSpec,
-      close: TransitionSpecs.TransitionIOSSpec,
-    },
-    headerStyleInterpolator: HeaderStyleInterpolators.forFade,
-    cardStyleInterpolator: ({current, layouts}) => {
-      return {
-        cardStyle: {
-          transform: [
-            {
-              translateX: current.progress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [layouts.screen.width, 0],
-              }),
-            },
-          ],
-        },
-      };
-    },
-  };
   // call accesscode stored in mmkv storage
-  const {mesinAbsen} = useSelector(state => state.auth);
+  const {mesinAbsen, isLoginMesinModalSuccessOpen} = useSelector(
+    state => state.auth,
+  );
 
-  if (mesinAbsen?.status === 'berhasil') {
+  if (mesinAbsen?.status === 'berhasil' && !isLoginMesinModalSuccessOpen) {
     return (
       <Stack.Navigator>
         <Stack.Screen
-          options={{...horizontalTransition, headerShown: false}}
+          options={{
+            ...horizontalTransition,
+            headerTitle: '',
+            headerTransparent: true,
+            headerTintColor: 'white',
+          }}
           name="HomeMesinAbsen"
           component={HomeMesinAbsen}
           lazy={true}
@@ -51,12 +33,7 @@ export default function MesinAbsenNavigator() {
         <Stack.Screen
           options={{
             ...horizontalTransition,
-            headerTransparent: true,
-            headerTintColor: 'white',
-            headerTitle: 'ABSEN RFID',
-            headerTitleStyle: {
-              fontFamily: 'OpenSans-SemiBold',
-            },
+            headerShown: false,
           }}
           name="RFID"
           component={RFIDMesinAbsen}
