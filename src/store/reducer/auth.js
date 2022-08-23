@@ -66,18 +66,17 @@ const authSlicer = createSlice({
       }
     },
     saveToDbAbsenFailed: (state, {payload}) => {
+      console.log([...state.dataAbsenGagal, payload]);
       return {
         ...state,
-        dataAbsenGagal: [
-          ...state.dataAbsenGagal,
-          state.dataAbsenGagal.filter(item => item.rfid !== payload.rfid),
-        ],
+        dataAbsenGagal: [...state.dataAbsenGagal, payload],
       };
     },
     clearFailedAbsenFromDb: state => {
       return {
         ...state,
         dataAbsenGagal: [],
+        failedAbsen: false,
       };
     },
     clearStatusFailedAbsen: state => {
@@ -134,7 +133,7 @@ const authSlicer = createSlice({
       return {
         ...state,
         isLoadingMulaiAbsen: true,
-        failedAbsen: true,
+        failedAbsen: false,
       };
     },
     [scanRFID.fulfilled]: (state, {payload}) => {
@@ -142,6 +141,7 @@ const authSlicer = createSlice({
         ...state,
         isLoadingMulaiAbsen: false,
         mulaiAbsen: payload,
+        failedAbsen: false,
       };
     },
     [scanRFID.rejected]: state => {

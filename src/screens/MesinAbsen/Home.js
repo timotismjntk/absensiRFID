@@ -29,17 +29,33 @@ export default function Home({navigation}) {
 
   const {dataAbsenGagal} = useSelector(state => state.auth);
 
-  useEffect(() => {
-    if (dataAbsenGagal?.length > 0) {
-      setLoading(true);
+  const sentAbsenFailed = useCallback(async () => {
+    try {
       dataAbsenGagal.forEach(item => {
         dispatch(scanRFID(item));
       });
-      dispatch(clearFailedAbsenFromDb());
-      dispatch(clearStatusFailedAbsen());
-      setLoading(false);
+    } catch (e) {
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+      return () => {
+        clearTimeout(timer);
+      };
     }
   }, [dataAbsenGagal]);
+
+  useEffect(() => {
+    setLoading(true);
+    sentAbsenFailed();
+    dispatch(clearFailedAbsenFromDb());
+    dispatch(clearStatusFailedAbsen());
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>

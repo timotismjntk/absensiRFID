@@ -20,12 +20,25 @@ export default function Home({navigation}) {
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.container}>
       <StatusBar animated={true} translucent backgroundColor="transparent" />
+      <RectButton onPress={logout} style={styles.logoutButton}>
+        <Text style={styles.logoutTitle}>Logout</Text>
+        <View style={styles.iconLogout}>
+          <Image
+            style={styles.image}
+            source={require('../../assets/logout.png')}
+          />
+        </View>
+      </RectButton>
       <View style={styles.wrapper}>
         <View style={styles.fotoWrapper}>
-          <Image
-            style={styles.fotoUser}
-            source={{uri: pengguna?.result?.url_foto}}
-          />
+          {pengguna?.result?.url_foto?.length > 0 ? (
+            <Image
+              style={styles.fotoUser}
+              source={{uri: pengguna?.result?.url_foto}}
+            />
+          ) : (
+            <Text style={styles.nopicture}>No Picture</Text>
+          )}
         </View>
         <Text style={styles.namaUser}>
           {pengguna?.result?.nama || 'Memuat...'}
@@ -53,9 +66,9 @@ export default function Home({navigation}) {
           style={styles.btn}>
           <Text style={styles.btnTitle}>Kunjungi Website Sekolah</Text>
         </RectButton>
-        <RectButton onPress={logout} style={styles.btn}>
+        {/* <RectButton onPress={logout} style={styles.btn}>
           <Text style={styles.btnTitle}>Keluar</Text>
-        </RectButton>
+        </RectButton> */}
       </View>
     </SafeAreaView>
   );
@@ -80,6 +93,13 @@ const styles = StyleSheet.create({
     height: windowWidth * 0.28,
     marginBottom: '6%',
     overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  nopicture: {
+    color: 'rgba(0,0,0,0.8)',
+    fontSize: windowWidth * 0.045,
+    fontFamily: 'OpenSans-Bold',
   },
   fotoUser: {
     width: '100%',
@@ -93,10 +113,10 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Bold',
   },
   nikUser: {
-    fontSize: windowWidth * 0.055,
+    fontSize: windowWidth * 0.046,
     color: 'white',
     textAlign: 'center',
-    fontFamily: 'OpenSans-Bold',
+    fontFamily: 'OpenSans-SemiBold',
     marginBottom: '3%',
   },
   btn: {

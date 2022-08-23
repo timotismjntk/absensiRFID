@@ -55,7 +55,7 @@ export default function Login() {
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} translucent backgroundColor="transparent" />
       <LoadingModal
-        open={isLoadingMesinAbsen}
+        open={isLoadingMesinAbsen || false}
         close={() => dispatch(clearStateMesinAbsen())}
       />
       <SuccessModal

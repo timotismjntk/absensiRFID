@@ -26,8 +26,13 @@ export default function RFID({route}) {
   const inputRef = useRef(null);
   const [rfidCode, setRfidCode] = useState('');
   const [clock, setClock] = useState('');
-  const {mesinAbsen, mulaiAbsen, isLoadingMulaiAbsen, failedAbsen} =
-    useSelector(state => state.auth);
+  const {
+    mesinAbsen,
+    mulaiAbsen,
+    isLoadingMulaiAbsen,
+    failedAbsen,
+    dataAbsenGagal,
+  } = useSelector(state => state.auth);
 
   const sendRfidCode = useCallback(() => {
     dispatch(
@@ -38,8 +43,7 @@ export default function RFID({route}) {
       }),
     );
     inputRef?.current?.clear();
-    setRfidCode('');
-  }, [mesinAbsen, route?.params, rfidCode]);
+  }, [mesinAbsen, route?.params, rfidCode, inputRef]);
 
   const customJam = useCallback(() => {
     const detik = new Date().getSeconds();
@@ -79,7 +83,8 @@ export default function RFID({route}) {
   }, [mulaiAbsen]);
 
   useEffect(() => {
-    if (failedAbsen) {
+    if (failedAbsen && !isLoadingMulaiAbsen) {
+      dispatch(clearStatusFailedAbsen());
       dispatch(
         saveToDbAbsenFailed({
           kode_akses: mesinAbsen?.result?.kode_akses,
@@ -87,20 +92,26 @@ export default function RFID({route}) {
           rfid: rfidCode,
         }),
       );
-      dispatch(clearStatusFailedAbsen());
+      ToastAndroid.showWithGravity(
+        'Terjadi kesalahan atau server sedang sibuk...',
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM,
+      );
     }
   }, [
     failedAbsen,
     mesinAbsen?.result?.kode_akses,
     route?.params?.jenis_absen,
     rfidCode,
+    dataAbsenGagal,
+    isLoadingMulaiAbsen,
   ]);
 
   return (
     <SafeAreaView edges={['bottom', 'right', 'left']} style={styles.container}>
       <View style={styles.wrapper}>
         <LoadingModal
-          open={isLoadingMulaiAbsen}
+          open={isLoadingMulaiAbsen || false}
           close={() => dispatch(clearMulaiAbsen())}
         />
         <StatusBar animated={true} translucent backgroundColor="transparent" />

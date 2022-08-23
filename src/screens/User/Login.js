@@ -14,7 +14,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import LoadingModal from '../../components/LoadingModal';
 import SuccessModal from '../../components/SuccessModal';
 
-import {windowWidth} from '../../utils';
+import {windowWidth, windowHeight} from '../../utils';
 
 import {
   loginPengguna,
@@ -22,7 +22,7 @@ import {
   showModalSuccess,
 } from '../../store/reducer/auth';
 
-export default function Login() {
+export default function Login({navigation}) {
   const dispatch = useDispatch();
   const [NIK, setNIK] = useState('');
 
@@ -59,6 +59,11 @@ export default function Login() {
         open={pengguna?.status === 'berhasil' && isLoginUserModalSuccessOpen}
         close={() => null}
       />
+      <RectButton
+        onPress={() => navigation.navigate('Home')}
+        style={styles.backButton}>
+        <Text style={styles.logoutTitle}>Kembali</Text>
+      </RectButton>
       <View style={styles.wrapper}>
         <Text style={styles.headerTitle}>
           Sistem Informasi Absensi{'\n'}Elektronik Sekolah
@@ -91,6 +96,19 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     width: '100%',
+  },
+  backButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    position: 'absolute',
+    top: windowHeight * 0.06,
+    left: windowHeight * 0.01,
+    padding: '2%',
+  },
+  logoutTitle: {
+    color: 'white',
+    fontSize: windowWidth * 0.04,
   },
   headerTitle: {
     fontSize: windowWidth * 0.055,
