@@ -67,7 +67,13 @@ export default function LogAbsen({navigation}) {
             ]}
           />
         </View>
-        <RectButton onPress={() => navigation.goBack()} style={styles.button}>
+        <RectButton
+          onPress={() =>
+            navigation.canGoBack()
+              ? navigation.goBack()
+              : navigation.navigate('HomeUser')
+          }
+          style={styles.button}>
           <Text style={styles.buttonTitle}>Kembali</Text>
         </RectButton>
       </View>

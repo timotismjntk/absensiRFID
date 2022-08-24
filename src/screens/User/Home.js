@@ -5,7 +5,13 @@ import {RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {windowWidth, windowHeight} from '../../utils';
+import {
+  windowWidth,
+  windowHeight,
+  unsubscribeFromTopic,
+  cancelAllLocalNotifications,
+  removeAllDeliveredNotifications,
+} from '../../utils';
 
 import {logoutPengguna} from '../../store/reducer/auth';
 
@@ -14,6 +20,9 @@ export default function Home({navigation}) {
   const {pengguna} = useSelector(state => state.auth);
 
   const logout = useCallback(() => {
+    unsubscribeFromTopic(pengguna);
+    cancelAllLocalNotifications();
+    removeAllDeliveredNotifications();
     dispatch(logoutPengguna());
   }, []);
 

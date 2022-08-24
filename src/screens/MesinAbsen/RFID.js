@@ -30,8 +30,8 @@ export default function RFID({route}) {
     mesinAbsen,
     mulaiAbsen,
     isLoadingMulaiAbsen,
-    failedAbsen,
-    dataAbsenGagal,
+    // failedAbsen,
+    // dataAbsenGagal,
   } = useSelector(state => state.auth);
 
   const sendRfidCode = useCallback(() => {
@@ -73,39 +73,39 @@ export default function RFID({route}) {
 
   useEffect(() => {
     if (mulaiAbsen?.pesan?.length > 0) {
-      ToastAndroid.showWithGravity(
-        mulaiAbsen?.pesan || '',
-        ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM,
-      );
+      // ToastAndroid.showWithGravity(
+      //   mulaiAbsen?.pesan || '',
+      //   ToastAndroid.SHORT,
+      //   ToastAndroid.BOTTOM,
+      // );
       dispatch(clearMulaiAbsen());
     }
   }, [mulaiAbsen]);
 
-  useEffect(() => {
-    if (failedAbsen && !isLoadingMulaiAbsen) {
-      dispatch(clearStatusFailedAbsen());
-      dispatch(
-        saveToDbAbsenFailed({
-          kode_akses: mesinAbsen?.result?.kode_akses,
-          jenis_absen: route?.params?.jenis_absen || '',
-          rfid: rfidCode,
-        }),
-      );
-      ToastAndroid.showWithGravity(
-        'Terjadi kesalahan atau server sedang sibuk...',
-        ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM,
-      );
-    }
-  }, [
-    failedAbsen,
-    mesinAbsen?.result?.kode_akses,
-    route?.params?.jenis_absen,
-    rfidCode,
-    dataAbsenGagal,
-    isLoadingMulaiAbsen,
-  ]);
+  // useEffect(() => {
+  //   if (failedAbsen && !isLoadingMulaiAbsen) {
+  //     dispatch(clearStatusFailedAbsen());
+  //     dispatch(
+  //       saveToDbAbsenFailed({
+  //         kode_akses: mesinAbsen?.result?.kode_akses,
+  //         jenis_absen: route?.params?.jenis_absen || '',
+  //         rfid: rfidCode,
+  //       }),
+  //     );
+  //     ToastAndroid.showWithGravity(
+  //       'Terjadi kesalahan atau server sedang sibuk...',
+  //       ToastAndroid.SHORT,
+  //       ToastAndroid.BOTTOM,
+  //     );
+  //   }
+  // }, [
+  //   failedAbsen,
+  //   mesinAbsen?.result?.kode_akses,
+  //   route?.params?.jenis_absen,
+  //   rfidCode,
+  //   dataAbsenGagal,
+  //   isLoadingMulaiAbsen,
+  // ]);
 
   return (
     <SafeAreaView edges={['bottom', 'right', 'left']} style={styles.container}>

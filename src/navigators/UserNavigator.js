@@ -27,6 +27,7 @@ export default function UserNavigator() {
             headerTitle: '',
             headerTransparent: true,
             headerTintColor: 'white',
+            headerLeft: null,
           }}
           name="HomeUser"
           component={HomeUser}

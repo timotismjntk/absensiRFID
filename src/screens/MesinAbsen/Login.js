@@ -74,6 +74,7 @@ export default function Login() {
             // placeholder="Masukkan Kode Akses"
             secureTextEntry
             value={accessCode}
+            keyboardType="numeric"
             onChangeText={setAccesCode}
             onSubmitEditing={login}
           />

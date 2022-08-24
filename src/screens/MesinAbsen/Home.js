@@ -4,15 +4,15 @@ import {StatusBar, StyleSheet, Text, Image, View} from 'react-native';
 import {RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
-import LoadingModal from '../../components/LoadingModal';
+// import LoadingModal from '../../components/LoadingModal';
 
 import {windowWidth, windowHeight} from '../../utils';
 
 import {
   logoutMesinAbsen,
-  clearFailedAbsenFromDb,
-  clearStatusFailedAbsen,
-  scanRFID,
+  // clearFailedAbsenFromDb,
+  // clearStatusFailedAbsen,
+  // scanRFID,
 } from '../../store/reducer/auth';
 
 export default function Home({navigation}) {
@@ -21,46 +21,46 @@ export default function Home({navigation}) {
   const logout = useCallback(() => {
     dispatch(logoutMesinAbsen());
   }, []);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
   const pilihAbsen = useCallback(value => {
     navigation.navigate('RFID', {jenis_absen: value});
   }, []);
 
-  const {dataAbsenGagal} = useSelector(state => state.auth);
+  // const {dataAbsenGagal} = useSelector(state => state.auth);
 
-  const sentAbsenFailed = useCallback(async () => {
-    try {
-      dataAbsenGagal.forEach(item => {
-        dispatch(scanRFID(item));
-      });
-    } catch (e) {
-      const timer = setTimeout(() => {
-        setLoading(false);
-      }, 2000);
-      return () => {
-        clearTimeout(timer);
-      };
-    }
-  }, [dataAbsenGagal]);
+  // const sentAbsenFailed = useCallback(async () => {
+  //   try {
+  //     dataAbsenGagal.forEach(item => {
+  //       dispatch(scanRFID(item));
+  //     });
+  //   } catch (e) {
+  //     const timer = setTimeout(() => {
+  //       setLoading(false);
+  //     }, 1000);
+  //     return () => {
+  //       clearTimeout(timer);
+  //     };
+  //   }
+  // }, [dataAbsenGagal]);
 
-  useEffect(() => {
-    setLoading(true);
-    sentAbsenFailed();
-    dispatch(clearFailedAbsenFromDb());
-    dispatch(clearStatusFailedAbsen());
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   sentAbsenFailed();
+  //   dispatch(clearFailedAbsenFromDb());
+  //   dispatch(clearStatusFailedAbsen());
+  //   const timer = setTimeout(() => {
+  //     setLoading(false);
+  //   }, 2000);
+  //   return () => {
+  //     clearTimeout(timer);
+  //   };
+  // }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} translucent backgroundColor="transparent" />
-      <LoadingModal open={loading} close={() => null} />
+      {/* <LoadingModal open={loading} close={() => null} /> */}
       <RectButton onPress={logout} style={styles.logoutButton}>
         <Text style={styles.logoutTitle}>Logout</Text>
         <View style={styles.iconLogout}>

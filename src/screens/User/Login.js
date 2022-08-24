@@ -11,10 +11,11 @@ import {
 import {RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
+
 import LoadingModal from '../../components/LoadingModal';
 import SuccessModal from '../../components/SuccessModal';
 
-import {windowWidth, windowHeight} from '../../utils';
+import {windowWidth, windowHeight, subscribeFromTopic} from '../../utils';
 
 import {
   loginPengguna,
@@ -45,6 +46,7 @@ export default function Login({navigation}) {
 
   useEffect(() => {
     if (pengguna?.status === 'berhasil' && isLoginUserModalSuccessOpen) {
+      subscribeFromTopic(pengguna);
       setTimeout(() => {
         dispatch(showModalSuccess({from: 'pengguna', value: false}));
       }, 3000);

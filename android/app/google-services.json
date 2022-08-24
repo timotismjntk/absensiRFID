@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "102018148964",
+    "project_id": "absensi-rfid-e164e",
+    "storage_bucket": "absensi-rfid-e164e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:102018148964:android:a3a0199155c88802e0cd71",
+        "android_client_info": {
+          "package_name": "com.absensirfid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "102018148964-p5es76a45d0sc44o5p0veck5uc1ae2q0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALy8gbxnwn-Bu5rGm19qhTcGEaxM9aj4w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "102018148964-p5es76a45d0sc44o5p0veck5uc1ae2q0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

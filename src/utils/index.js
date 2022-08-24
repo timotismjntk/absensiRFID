@@ -4,6 +4,7 @@ import {
   HeaderStyleInterpolators,
   TransitionSpecs,
 } from '@react-navigation/stack';
+import PushNotification from 'react-native-push-notification';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
@@ -45,8 +46,34 @@ const horizontalTransition = {
   },
 };
 
+const cancelAllLocalNotifications = () => {
+  PushNotification.cancelAllLocalNotifications();
+};
+
+const removeAllDeliveredNotifications = () => {
+  PushNotification.removeAllDeliveredNotifications();
+};
+
+const subscribeFromTopic = pengguna => {
+  PushNotification.subscribeToTopic(
+    pengguna?.result?.siswa_id?.toString() +
+      pengguna?.result?.nisn_nik?.toString(),
+  );
+};
+
+const unsubscribeFromTopic = pengguna => {
+  PushNotification.unsubscribeFromTopic(
+    pengguna?.result?.siswa_id?.toString() +
+      pengguna?.result?.nisn_nik?.toString(),
+  );
+};
+
 module.exports = {
   windowHeight,
   windowWidth,
   horizontalTransition,
+  cancelAllLocalNotifications,
+  removeAllDeliveredNotifications,
+  subscribeFromTopic,
+  unsubscribeFromTopic,
 };
