@@ -23,6 +23,7 @@ export default function RootNavigator() {
   const config = {
     screens: {
       UserNavigator: {
+        initialRouteName: 'UserNavigator',
         screens: {
           LogAbsen: 'logAbsen',
         },
@@ -36,13 +37,15 @@ export default function RootNavigator() {
     getInitialURL: async () => {
       // check for notification deep linking
       PushNotification.popInitialNotification(notification => {
+        // <---- 1
         if (!notification) {
           return;
         }
-
-        Linking.openURL('absensirfid://logAbsen');
+        const link = notification?.data?.link || null;
+        link && Linking.openURL(link);
       });
-      return 'absensirfid://logAbsen';
+      // this is the default return
+      // return await Linking.getInitialURL();
     },
   };
 

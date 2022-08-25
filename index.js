@@ -48,7 +48,7 @@ PushNotification.configure({
     });
     const clicked = data?.userInteraction;
     if (clicked) {
-      Linking.openURL('absensirfid://logAbsen');
+      Linking.openURL(data?.data?.link);
       PushNotification.cancelLocalNotification({id: data?.id});
     }
   },
