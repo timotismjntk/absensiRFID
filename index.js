@@ -9,9 +9,9 @@ import PushNotification, {Importance} from 'react-native-push-notification';
 import {Linking} from 'react-native';
 
 PushNotification.createChannel({
-  channelId: 'absensi-RFID',
-  channelName: 'absensi-RFID Channel',
-  channelDescription: 'absensi-RFID',
+  channelId: 'Sekoolah.id',
+  channelName: 'Sekoolah.id Notification',
+  channelDescription: 'Sekoolah.id',
   soundName: 'default',
   importance: Importance.HIGH,
   allowWhileIdle: true,
@@ -25,7 +25,7 @@ PushNotification.configure({
     PushNotification.localNotification({
       id: String(data?.id || ''),
       autoCancel: true,
-      channelId: 'absensi-RFID',
+      channelId: 'Sekoolah.id',
       title: data?.title,
       message:
         data?.message?.length > 240
@@ -48,7 +48,7 @@ PushNotification.configure({
     });
     const clicked = data?.userInteraction;
     if (clicked) {
-      Linking.openURL(data?.data?.link);
+      data?.data?.link && Linking.openURL(data?.data?.link);
       PushNotification.cancelLocalNotification({id: data?.id});
     }
   },
