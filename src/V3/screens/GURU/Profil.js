@@ -1,4 +1,5 @@
-import React, {useState, useRef} from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useState, useCallback, useEffect} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -6,17 +7,30 @@ import {
   Text,
   View,
   Image,
+  Alert,
 } from 'react-native';
 import {RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useSelector} from 'react-redux';
-import CustomTextInput from '../../components/CustomTextInput';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {useDispatch, useSelector} from 'react-redux';
+
+import CustomTextInput from '../../components/CustomTextInput';
+import LoadingModal from '../../components/LoadingModal';
 
 import {windowWidth, windowHeight} from '../../utils';
 
+import {
+  updateProfilSayaRedux,
+  clearUpdateProfilSaya,
+} from '../../redux/reducer/GURU/profilSaya';
+
 export default function Profil() {
-  const {profilSaya = {}} = useSelector(state => state.profilSayaGuru) || {};
+  const dispatch = useDispatch();
+  const {
+    profilSaya = {},
+    updateProfilSaya = {},
+    isLoadingUpdateProfilSaya = false,
+  } = useSelector(state => state.profilSayaGuru) || {};
   const {
     nama = '-',
     username = '-',
@@ -26,6 +40,7 @@ export default function Profil() {
     alamat = '-',
     nomor_wa = '-',
     foto_profil = '-',
+    user_id = '',
   } = profilSaya?.data || {};
   const {
     // jabatan = '',
@@ -42,10 +57,42 @@ export default function Profil() {
   const [password, setPassword] = useState('');
   const [passwordOnFocus, setPasswordOnFocus] = useState(false);
 
+  const updateProfilFn = useCallback(() => {
+    dispatch(
+      updateProfilSayaRedux({user_id, nomor_wa: whatsappNumber, password}),
+    );
+  }, [password, user_id, whatsappNumber]);
+
+  const isFilled = useCallback(() => {
+    return (
+      password.length > 5 &&
+      password !== '123456' &&
+      whatsappNumber?.length > 10
+    );
+  }, [password, whatsappNumber]);
+
+  useEffect(() => {
+    if (updateProfilSaya?.status?.length > 0) {
+      Alert.alert(
+        updateProfilSaya?.status === 'berhasil' ? 'Sukses' : 'Gagal',
+        updateProfilSaya?.pesan || '',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              dispatch(clearUpdateProfilSaya());
+            },
+          },
+        ],
+      );
+    }
+  }, [updateProfilSaya]);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} translucent backgroundColor="#3B3B3B" />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <LoadingModal open={isLoadingUpdateProfilSaya} close={() => null} />
         <View style={styles.fotoProfilWrapper}>
           {foto_profil ? (
             <Image source={{uri: foto_profil}} style={styles.profilPicture} />
@@ -157,7 +204,7 @@ export default function Profil() {
               setPasswordOnFocus(false);
             }}
             style={
-              password === '123456' || password.length < 6
+              password === '123456' || password.length < 7
                 ? styles.errorInput
                 : passwordOnFocus
                 ? styles.inputFocus
@@ -167,16 +214,13 @@ export default function Profil() {
           {password === '123456' && (
             <Text style={styles.error}>* Password terlalu mudah ditebak</Text>
           )}
-          {password.length < 6 && (
+          {password.length < 7 && (
             <Text style={styles.error}>Minimal 6 digit angka</Text>
           )}
           <RectButton
-            enabled={!(password === '123456' || whatsappNumber.length < 10)}
-            style={
-              password === '123456' || whatsappNumber.length < 10
-                ? styles.disabledSaveButton
-                : styles.saveButton
-            }>
+            enabled={!isFilled()}
+            onPress={updateProfilFn}
+            style={!isFilled() ? styles.disabledSaveButton : styles.saveButton}>
             <Text style={styles.saveButtonTitle}>Simpan</Text>
           </RectButton>
         </View>

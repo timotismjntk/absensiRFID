@@ -100,7 +100,7 @@ export default function DetailBlog({route}) {
               baseStyle={{
                 color: 'black',
                 fontSize: windowWidth * 0.038,
-                lineHeight: 30,
+                lineHeight: 26,
                 marginTop: '5%',
                 fontFamily: 'OpenSans-Regular',
               }}

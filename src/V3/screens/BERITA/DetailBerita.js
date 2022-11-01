@@ -86,14 +86,13 @@ export default function DetailBerita({route}) {
                 fontSize: windowWidth * 0.05,
                 fontWeight: '500',
               }}>
-              {route?.params?.judul ||
-                'Harga iPhone 14, iPhone 14 Pro dan iPhone 14 Pro Max yang Dijual Hari Ini'}
+              {route?.params?.judul || ''}
             </Text>
             <RenderHTML
               baseStyle={{
                 color: 'black',
                 fontSize: windowWidth * 0.038,
-                lineHeight: 30,
+                lineHeight: 26,
                 marginTop: '5%',
                 fontFamily: 'OpenSans-Regular',
               }}
