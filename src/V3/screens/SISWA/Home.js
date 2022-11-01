@@ -97,6 +97,12 @@ export default function Home({navigation}) {
     }, [user_id]),
   );
 
+  useEffect(() => {
+    if (profilSaya?.pesan === 'User tidak terdaftar') {
+      logout();
+    }
+  }, [profilSaya, user_id, website_id, kelas_id]);
+
   const logout = useCallback(() => {
     unsubscribeFromTopic('userById' + user_id);
     unsubscribeFromTopic('userBySekolah' + website_id);

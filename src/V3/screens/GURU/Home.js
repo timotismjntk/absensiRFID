@@ -90,8 +90,17 @@ export default function Home({navigation}) {
     }, [user_id]),
   );
 
+  useEffect(() => {
+    if (profilSaya?.pesan === 'User tidak terdaftar') {
+      logout();
+    }
+  }, [profilSaya, user_id, website_id]);
+
   const logout = useCallback(() => {
     unsubscribeFromTopic(user_id);
+    unsubscribeFromTopic('userBySekolah' + website_id);
+    unsubscribeFromTopic('guruBySekolah' + website_id);
+    unsubscribeFromTopic('topics_global');
     cancelAllLocalNotifications();
     removeAllDeliveredNotifications();
     dispatch(logoutGuru());
