@@ -218,7 +218,7 @@ export default function Profil() {
             <Text style={styles.error}>Minimal 6 digit angka</Text>
           )}
           <RectButton
-            enabled={!isFilled()}
+            enabled={isFilled()}
             onPress={updateProfilFn}
             style={!isFilled() ? styles.disabledSaveButton : styles.saveButton}>
             <Text style={styles.saveButtonTitle}>Simpan</Text>
