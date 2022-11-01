@@ -150,7 +150,6 @@ export default function Profil() {
           <CustomTextInput
             value={whatsappNumber}
             keyboardType="numeric"
-            editable={false}
             setValue={setWhatsappNumber}
             onFocus={() => {
               setWhatsappNumberOnFocus(true);
