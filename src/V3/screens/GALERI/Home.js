@@ -137,6 +137,9 @@ export default function Home({navigation}) {
             dispatch(getGaleriSiswa({website_id: authSiswa?.data?.website_id}));
           }
         }}
+        ListEmptyComponent={
+          <Text style={styles.emptyData}>Galeri kosong...</Text>
+        }
         progressViewOffset={windowHeight * 0.15}
         keyExtractor={(item, index) => item?.gallery_kategori_id}
         columnWrapperStyle={styles.columnWrapper}
@@ -189,6 +192,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     paddingHorizontal: '4%',
     marginBottom: '5%',
+  },
+  emptyData: {
+    fontSize: windowWidth * 0.034,
+    fontFamily: 'OpenSans-Regular',
+    color: 'black',
+    width: windowWidth * 0.85,
+    alignSelf: 'center',
   },
   defaultItem: {
     marginBottom: '4%',

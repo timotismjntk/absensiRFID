@@ -9,6 +9,7 @@ import {
   View,
   Image,
   BackHandler,
+  Linking,
 } from 'react-native';
 import {RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -47,7 +48,7 @@ export default function Login({route, navigation}) {
   const userNameRef = useRef(null);
   const {rememberMe: userData = {}} =
     useSelector(state => state.authSiswa) || {};
-  const [idSekolah, setIdSekolah] = useState('');
+  const [idSekolah, setIdSekolah] = useState(userData?.website_id || '');
   const [username, setUsername] = useState(userData?.username || '');
   const [password, setPassword] = useState(userData?.password || '');
   const [isChecked, setIsChecked] = useState(
@@ -61,13 +62,20 @@ export default function Login({route, navigation}) {
       ]);
     } else {
       if (isChecked) {
-        dispatch(loginSiswa({username, password}));
+        dispatch(loginSiswa({website_id: idSekolah, username, password}));
       } else {
-        dispatch(loginSiswa({username, password}));
-        dispatch(rememberMe({username: '', password: '', isRemember: false}));
+        dispatch(loginSiswa({username, password, website_id: idSekolah}));
+        dispatch(
+          rememberMe({
+            username: '',
+            password: '',
+            website_id: '',
+            isRemember: false,
+          }),
+        );
       }
     }
-  }, [username, password, isChecked]);
+  }, [username, password, isChecked, idSekolah]);
 
   const {authSiswa = {}, isLoadingLoginSiswa = false} =
     useSelector(state => state.authSiswa) || {};
@@ -84,9 +92,16 @@ export default function Login({route, navigation}) {
         [{text: 'OK', onPress: () => dispatch(clearStateSiswa())}],
       );
     } else if (authSiswa?.status === 'berhasil' && isChecked) {
-      dispatch(rememberMe({username, password, isRemember: true}));
+      dispatch(
+        rememberMe({
+          username,
+          password,
+          website_id: idSekolah,
+          isRemember: true,
+        }),
+      );
     }
-  }, [authSiswa, username, password, isChecked]);
+  }, [authSiswa, username, password, isChecked, idSekolah]);
 
   return (
     <SafeAreaView edges={['bottom', 'right', 'left']} style={styles.container}>
@@ -107,7 +122,7 @@ export default function Login({route, navigation}) {
               height: '100%',
               resizeMode: 'center',
             }}
-            source={require('../../assets/logo.png')}
+            source={require('../../assets/icons2/logo.png')}
           />
         </View>
         <Text style={styles.headerTitle}>Anda masuk sebagai Siswa / Wali</Text>
@@ -160,7 +175,11 @@ export default function Login({route, navigation}) {
           <RectButton onPress={login} style={styles.loginButton}>
             <Text style={styles.loginButtonTitle}>Masuk</Text>
           </RectButton>
-          <Text style={styles.bantuanTitle}>Bantuan</Text>
+          <Text
+            onPress={() => Linking.openURL('https://sekoolah.id/wa')}
+            style={styles.bantuanTitle}>
+            Bantuan
+          </Text>
         </View>
       </View>
     </SafeAreaView>

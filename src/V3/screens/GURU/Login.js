@@ -9,6 +9,7 @@ import {
   View,
   Image,
   BackHandler,
+  Linking,
 } from 'react-native';
 import {RectButton} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -47,7 +48,7 @@ export default function Login({route, navigation}) {
   const userNameRef = useRef(null);
   const {rememberMe: userData = {}} =
     useSelector(state => state.authGuru) || {};
-  const [idSekolah, setIdSekolah] = useState('');
+  const [idSekolah, setIdSekolah] = useState(userData?.website_id || '');
   const [username, setUsername] = useState(userData?.username || '');
   const [password, setPassword] = useState(userData?.password || '');
   const [isChecked, setIsChecked] = useState(
@@ -61,13 +62,20 @@ export default function Login({route, navigation}) {
       ]);
     } else {
       if (isChecked) {
-        dispatch(loginGuru({username, password}));
+        dispatch(loginGuru({username, password, website_id: idSekolah}));
       } else {
-        dispatch(loginGuru({username, password}));
-        dispatch(rememberMe({username: '', password: '', isRemember: false}));
+        dispatch(loginGuru({username, password, website_id: idSekolah}));
+        dispatch(
+          rememberMe({
+            username: '',
+            password: '',
+            website_id: '',
+            isRemember: false,
+          }),
+        );
       }
     }
-  }, [username, password, isChecked]);
+  }, [username, password, isChecked, idSekolah]);
 
   const {authGuru = {}, isLoadingLoginGuru = false} =
     useSelector(state => state.authGuru) || {};
@@ -84,9 +92,16 @@ export default function Login({route, navigation}) {
         [{text: 'OK', onPress: () => dispatch(clearStateGuru())}],
       );
     } else if (authGuru?.status === 'berhasil' && isChecked) {
-      dispatch(rememberMe({username, password, isRemember: true}));
+      dispatch(
+        rememberMe({
+          username,
+          password,
+          website_id: idSekolah,
+          isRemember: true,
+        }),
+      );
     }
-  }, [authGuru, username, password, isChecked]);
+  }, [authGuru, username, password, isChecked, idSekolah]);
 
   return (
     <SafeAreaView edges={['bottom', 'right', 'left']} style={styles.container}>
@@ -160,7 +175,11 @@ export default function Login({route, navigation}) {
           <RectButton onPress={login} style={styles.loginButton}>
             <Text style={styles.loginButtonTitle}>Masuk</Text>
           </RectButton>
-          <Text style={styles.bantuanTitle}>Bantuan</Text>
+          <Text
+            onPress={() => Linking.openURL('https://sekoolah.id/wa')}
+            style={styles.bantuanTitle}>
+            Bantuan
+          </Text>
         </View>
       </View>
     </SafeAreaView>

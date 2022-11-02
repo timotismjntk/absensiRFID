@@ -167,7 +167,7 @@ export default function Profil() {
                 : ''
             }
             editable={false}
-            style={styles.input}
+            style={styles.disabledInput}
           />
           <Text style={styles.inputTitle}>Nomor Whatsapp</Text>
           <CustomTextInput

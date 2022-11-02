@@ -47,7 +47,7 @@ export default function Home({navigation}) {
   } = profilSaya?.data || {};
 
   useEffect(() => {
-    if (user_id?.length > 0 && website_id?.length > 0 && kelas_id?.length > 0) {
+    if (user_id?.length > 0 && website_id?.length > 0) {
       subscribeFromTopic('userById' + user_id);
       subscribeFromTopic('userBySekolah' + website_id);
       subscribeFromTopic('siswaBySekolah' + website_id);

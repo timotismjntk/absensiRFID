@@ -7,7 +7,7 @@ import Slider from '../components/Slider';
 
 import {windowWidth, windowHeight} from '../utils';
 
-export default function Dashboard({navigation}) {
+export default function Dashboard({route, navigation}) {
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.container}>
       <StatusBar animated={true} translucent backgroundColor="#3B3B3B" />

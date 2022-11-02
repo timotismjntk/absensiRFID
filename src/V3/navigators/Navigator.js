@@ -22,21 +22,56 @@ import BlogNavigator from './BLOG/BlogNavigator';
 import GaleriNavigator from './GALERI/GaleriNavigator';
 import BarcodeNavigator from './BARCODE/BarcodeNavigator';
 
+// import not found linking
+import NotFound from './../screens/NotFound';
+
 export default function RootNavigator() {
-  const config = {
+  const {authMesin = {}} = useSelector(state => state.authMesin) || {};
+  const {authGuru = {}} = useSelector(state => state.authGuru) || {};
+  const {authSiswa = {}} = useSelector(state => state.authSiswa) || {};
+
+  const configSiswa = {
     screens: {
-      UserNavigator: {
-        initialRouteName: 'UserNavigator',
+      SiswaNavigator: {
         screens: {
-          LogAbsen: 'logAbsen',
+          LogAbsen: {
+            path: 'logAbsenSiswa',
+          },
+          Agenda: {
+            path: 'agenda',
+          },
         },
       },
+      InformasiNavigator: 'informasi',
+      BeritaNavigator: 'berita',
+      GaleriNavigator: 'galeri',
+      BlogNavigator: 'blog',
+      NotFound: '*',
+    },
+  };
+  const configGuru = {
+    screens: {
+      GuruNavigator: {
+        screens: {
+          LogAbsen: {
+            path: 'logAbsenGuru',
+          },
+          Agenda: {
+            path: 'agenda',
+          },
+        },
+      },
+      InformasiNavigator: 'informasi',
+      BeritaNavigator: 'berita',
+      GaleriNavigator: 'galeri',
+      BlogNavigator: 'blog',
+      NotFound: '*',
     },
   };
 
-  const linking = {
-    prefixes: ['absensirfid://'],
-    config,
+  const linkingGuru = {
+    prefixes: ['sekoolah://'],
+    config: configGuru,
     getInitialURL: async () => {
       // check for notification deep linking
       PushNotification.popInitialNotification(notification => {
@@ -44,21 +79,35 @@ export default function RootNavigator() {
         if (!notification) {
           return;
         }
-        const link = notification?.data?.link || null;
-        link && Linking.openURL(link);
+        const url = notification?.data?.url || null;
+        url && Linking.openURL(url);
       });
       // this is the default return
       // return await Linking.getInitialURL();
     },
   };
 
-  const {authMesin = {}} = useSelector(state => state.authMesin) || {};
-  const {authGuru = {}} = useSelector(state => state.authGuru) || {};
-  const {authSiswa = {}} = useSelector(state => state.authSiswa) || {};
+  const linkingSiswa = {
+    prefixes: ['sekoolah://'],
+    config: configSiswa,
+    getInitialURL: async () => {
+      // check for notification deep linking
+      PushNotification.popInitialNotification(notification => {
+        // <---- 1
+        if (!notification) {
+          return;
+        }
+        const url = notification?.data?.url || null;
+        url && Linking.openURL(url);
+      });
+      // this is the default return
+      // return await Linking.getInitialURL();
+    },
+  };
 
   if (authMesin?.status === 'berhasil') {
     return (
-      <NavigationContainer linking={linking}>
+      <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
             options={{...horizontalTransition, headerShown: false}}
@@ -101,7 +150,7 @@ export default function RootNavigator() {
     );
   } else if (authGuru?.status === 'berhasil') {
     return (
-      <NavigationContainer linking={linking}>
+      <NavigationContainer linking={linkingGuru}>
         <Stack.Navigator>
           <Stack.Screen
             options={{...horizontalTransition, headerShown: false}}
@@ -139,12 +188,22 @@ export default function RootNavigator() {
             component={BarcodeNavigator}
             lazy={true}
           />
+          <Stack.Screen
+            options={{
+              ...horizontalTransition,
+              headerTransparent: true,
+              headerTitle: '',
+            }}
+            name="NotFound"
+            component={NotFound}
+            lazy={true}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     );
   } else if (authSiswa?.status === 'berhasil') {
     return (
-      <NavigationContainer linking={linking}>
+      <NavigationContainer linking={linkingSiswa}>
         <Stack.Navigator>
           <Stack.Screen
             options={{...horizontalTransition, headerShown: false}}
@@ -182,12 +241,22 @@ export default function RootNavigator() {
             component={BarcodeNavigator}
             lazy={true}
           />
+          <Stack.Screen
+            options={{
+              ...horizontalTransition,
+              headerTransparent: true,
+              headerTitle: '',
+            }}
+            name="NotFound"
+            component={NotFound}
+            lazy={true}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     );
   } else {
     return (
-      <NavigationContainer linking={linking}>
+      <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
             options={{

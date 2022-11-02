@@ -4,8 +4,10 @@ import http from '../../../helpers/http';
 const initialState = {
   authSiswa: {},
   rememberMe: {
+    website_id: '',
     username: '',
     password: '',
+    isRemember: false,
   },
   lupaPassword: {},
   isLoadingLupaPassword: false,
@@ -14,10 +16,11 @@ const initialState = {
 
 export const loginSiswa = createAsyncThunk(
   'authSiswa/loginSiswa',
-  async ({username, password}) => {
+  async ({username, password, website_id}) => {
     const {data} = await http().post('authentication', {
       username,
       password,
+      website_id,
       form: 'Siswa',
     });
     return data;
@@ -40,7 +43,7 @@ const authSiswaSlicer = createSlice({
   reducers: {
     rememberMe: (
       state,
-      {payload: {username, password, isRemember = false}},
+      {payload: {username, password, isRemember = false, website_id}},
     ) => {
       if (isRemember) {
         return {
@@ -49,6 +52,7 @@ const authSiswaSlicer = createSlice({
             ...state.rememberMe,
             username,
             password,
+            website_id,
           },
         };
       } else {
@@ -58,6 +62,7 @@ const authSiswaSlicer = createSlice({
             ...state.rememberMe,
             username: '',
             password: '',
+            website_id: '',
           },
         };
       }

@@ -4,8 +4,10 @@ import http from '../../../helpers/http';
 const initialState = {
   authGuru: {},
   rememberMe: {
+    website_id: '',
     username: '',
     password: '',
+    isRemember: false,
   },
   lupaPassword: {},
   isLoadingLupaPassword: false,
@@ -14,10 +16,11 @@ const initialState = {
 
 export const loginGuru = createAsyncThunk(
   'authGuru/loginGuru',
-  async ({username, password}) => {
+  async ({username, password, website_id}) => {
     const {data} = await http().post('authentication', {
       username,
       password,
+      website_id,
       form: 'Guru',
     });
     return data;
@@ -40,7 +43,7 @@ const authGuruSlicer = createSlice({
   reducers: {
     rememberMe: (
       state,
-      {payload: {username, password, isRemember = false}},
+      {payload: {username, password, website_id, isRemember = false}},
     ) => {
       if (isRemember) {
         return {
@@ -49,6 +52,7 @@ const authGuruSlicer = createSlice({
             ...state.rememberMe,
             username,
             password,
+            website_id,
           },
         };
       } else {
@@ -58,6 +62,7 @@ const authGuruSlicer = createSlice({
             ...state.rememberMe,
             username: '',
             password: '',
+            website_id: '',
           },
         };
       }

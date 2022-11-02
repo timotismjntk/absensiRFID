@@ -187,6 +187,9 @@ export default function Blog({navigation, route}) {
             />
           </View>
         )}
+        ListEmptyComponent={
+          <Text style={styles.emptyData}>Berita kosong...</Text>
+        }
         contentContainerStyle={styles.flatlistContainer}
         ListFooterComponent={
           memoizedData?.length > 0 && (
@@ -230,6 +233,13 @@ const styles = StyleSheet.create({
   flatlistContainer: {
     paddingVertical: '6%',
     paddingTop: '30%',
+  },
+  emptyData: {
+    fontSize: windowWidth * 0.034,
+    fontFamily: 'OpenSans-Regular',
+    color: 'black',
+    width: windowWidth * 0.85,
+    alignSelf: 'center',
   },
   defaultItem: {
     alignSelf: 'center',

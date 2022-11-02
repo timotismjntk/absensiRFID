@@ -48,7 +48,7 @@ PushNotification.configure({
     });
     const clicked = data?.userInteraction;
     if (clicked) {
-      data?.data?.link && Linking.openURL(data?.data?.link);
+      data?.data?.url && Linking.openURL(data?.data?.url);
       PushNotification.cancelLocalNotification({id: data?.id});
     }
   },

@@ -13,7 +13,7 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="absensirfid"/>
+        <data android:scheme="sekoolah"/>
       </intent-filter>
     </activity>
     <meta-data android:name="com.dieam.reactnativepushnotification.notification_foreground" android:value="false"/>

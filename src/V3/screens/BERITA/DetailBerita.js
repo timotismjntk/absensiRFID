@@ -19,22 +19,12 @@ export default function DetailBerita({route}) {
   );
 
   const onElement = useCallback(element => {
-    if (element.tagName === 'font') {
-      const fontFace = element.attribs.face;
-      const p = new Element(
-        'p',
-        {
-          style: `font-family: ${fontFace}`,
-        },
-        element.children,
-      );
-      replaceElement(element, p);
-    }
     if (element.tagName === 'img') {
       const cover = element.attribs.src;
       if (cover) {
         const img = new Element('img', {
-          src: `https://diskominfo.labura.go.id/${cover}`,
+          src: cover,
+          style: 'width: 20rem',
         });
         replaceElement(element, img);
       }
@@ -98,7 +88,7 @@ export default function DetailBerita({route}) {
               }}
               contentWidth={windowWidth}
               source={{
-                html: route.params?.cuplikan || '',
+                html: route.params?.konten || '',
               }}
               renderersProps={renderersProps}
               domVisitors={{
