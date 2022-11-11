@@ -5,9 +5,9 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {PersistGate} from 'redux-persist/integration/react';
 
 // navigationContainer
-import Navigator from './src/V3/navigators/Navigator';
+import Navigator from './src/navigators/Navigator';
 
-import {store, persistor} from './src/V3/redux/store';
+import {store, persistor} from './src/redux/store';
 import {Provider} from 'react-redux';
 
 LogBox.ignoreLogs([
