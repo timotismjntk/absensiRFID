@@ -42,6 +42,7 @@ export default function Pertemuan({navigation}) {
     getPertemuanKeResult = {},
     getPertemuanByIdResult = {},
     isLoadingGetPertemuanById = false,
+    isLoadingUbahPertemuan = false,
   } = useSelector(state => state.pertemuan) || {};
 
   useEffect(() => {
@@ -228,7 +229,10 @@ export default function Pertemuan({navigation}) {
       <ScrollView
         ref={scrollRef}
         contentContainerStyle={styles.scrollContainer}>
-        <LoadingModal open={isLoadingGetPertemuanById} close={() => null} />
+        <LoadingModal
+          open={isLoadingGetPertemuanById || isLoadingUbahPertemuan}
+          close={() => null}
+        />
         <View style={styles.wrapper}>
           <View style={styles.form}>
             <Text style={styles.inputTitle}>Tahun Ajaran</Text>

@@ -12,13 +12,19 @@ import {Provider} from 'react-redux';
 
 LogBox.ignoreLogs([
   "[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!",
+  'Require cycle: node_modules',
 ]);
-
 export default function App() {
   useEffect(() => {
     const getPermission = async () => {
       const cameraPermission = await PermissionsAndroid.check(
         PermissionsAndroid.PERMISSIONS.CAMERA,
+      );
+      const READ_EXTERNAL_STORAGE = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      );
+      const WRITE_EXTERNAL_STORAGE = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       );
       if (cameraPermission !== PermissionsAndroid.RESULTS.GRANTED) {
         const newCameraPermission = await PermissionsAndroid.request(
@@ -31,6 +37,52 @@ export default function App() {
               onPress: async () => {
                 await PermissionsAndroid.request(
                   PermissionsAndroid.PERMISSIONS.CAMERA,
+                );
+                Linking.openSettings();
+              },
+              style: 'cancel',
+            },
+          ]);
+        }
+      }
+      if (READ_EXTERNAL_STORAGE !== PermissionsAndroid.RESULTS.GRANTED) {
+        const newREAD_EXTERNAL_STORAGEPermission =
+          await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          );
+        if (
+          newREAD_EXTERNAL_STORAGEPermission !==
+          PermissionsAndroid.RESULTS.GRANTED
+        ) {
+          Alert.alert('Error', 'Akses tidak diberi izin', [
+            {
+              text: 'Tutup',
+              onPress: async () => {
+                await PermissionsAndroid.request(
+                  PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+                );
+                Linking.openSettings();
+              },
+              style: 'cancel',
+            },
+          ]);
+        }
+      }
+      if (WRITE_EXTERNAL_STORAGE !== PermissionsAndroid.RESULTS.GRANTED) {
+        const newWRITE_EXTERNAL_STORAGEPermission =
+          await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          );
+        if (
+          newWRITE_EXTERNAL_STORAGEPermission !==
+          PermissionsAndroid.RESULTS.GRANTED
+        ) {
+          Alert.alert('Error', 'Akses tidak diberi izin', [
+            {
+              text: 'Tutup',
+              onPress: async () => {
+                await PermissionsAndroid.request(
+                  PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
                 );
                 Linking.openSettings();
               },

@@ -1,12 +1,12 @@
 import React, {useCallback, useState} from 'react';
-import {StyleSheet, FlatList, Text, View} from 'react-native';
+import {StyleSheet, FlatList, Text, View, Linking, Alert} from 'react-native';
 import {RectButton} from 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DocumentPicker from 'react-native-document-picker';
 import {useSelector} from 'react-redux';
 
-import {windowWidth} from '../../../../../../utils';
-import {uploadUrl} from '../../../../../../helpers/http';
+import {windowWidth, downloadFile} from '../../../../../../utils';
+import {hapusMateriUrl, uploadUrl} from '../../../../../../helpers/http';
 
 export default function Materi({
   data,
@@ -47,19 +47,32 @@ export default function Materi({
         if (res?.length > 0) {
           formData.append('berkas', res[0]);
         } else {
-          formData.append('berkas', res);
+          formData.append('berkas', {
+            name: res.name,
+            uri: res.uri,
+            size: res.size,
+            type: res.type,
+          });
         }
         formData.append('src', src);
         formData.append('token', authGuru?.data?.token || '');
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', uploadUrl);
-        xhr.send(formData);
         xhr.addEventListener('loadend', () => {
-          const response = JSON.parse(xhr.response);
+          const response = xhr.response ? JSON.parse(xhr.response) : {};
           if (
             response?.status === 'berhasil' &&
             response?.pesan === 'Upload Berhasil'
           ) {
+            Alert.alert(
+              response?.status === 'berhasil' ? 'Sukses' : 'Gagal',
+              response?.pesan || '',
+              [
+                {
+                  text: response?.status === 'berhasil' ? 'OK' : 'Tutup',
+                  onPress: () => null,
+                },
+              ],
+            );
             onChange(prev =>
               prev.map((item, index) => {
                 if (index === 1) {
@@ -74,6 +87,8 @@ export default function Materi({
             );
           }
         });
+        xhr.open('POST', uploadUrl);
+        xhr.send(formData);
       }
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -83,10 +98,81 @@ export default function Materi({
     }
   }, [authGuru?.data, onChange]);
 
+  const hapusMateriById = useCallback(
+    async (absensipertemuan_materi_id, index) => {
+      try {
+        if (absensipertemuan_materi_id?.length > 0) {
+          // jika materi sudah disimpan bersama dengan pertemuan
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', hapusMateriUrl);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.send(JSON.stringify({absensipertemuan_materi_id}));
+          xhr.addEventListener('loadend', () => {
+            const response = xhr.response ? JSON.parse(xhr.response) : {};
+            if (
+              response?.status === 'berhasil' &&
+              response?.pesan === 'Materi berhasil dihapus'
+            ) {
+              Alert.alert(
+                response?.status === 'berhasil' ? 'Sukses' : 'Gagal',
+                response?.pesan || '',
+                [
+                  {
+                    text: response?.status === 'berhasil' ? 'OK' : 'Tutup',
+                    onPress: () => null,
+                  },
+                ],
+              );
+              onChange(prev =>
+                prev.map((item, idx) => {
+                  if (idx === 1) {
+                    return {
+                      ...item,
+                      materi: item?.materi.filter(
+                        materiItem =>
+                          materiItem?.absensipertemuan_materi_id !==
+                          absensipertemuan_materi_id,
+                      ),
+                    };
+                  } else {
+                    return item;
+                  }
+                }),
+              );
+            }
+          });
+        } else {
+          // jika materi belum disimpan bersama dengan pertemuan
+          Alert.alert('Sukses', 'Materi berhasil dihapus', [
+            {
+              text: 'OK',
+              onPress: () => null,
+            },
+          ]);
+          onChange(prev =>
+            prev.map((item, idx) => {
+              if (idx === 1) {
+                return {
+                  ...item,
+                  materi: item?.materi.filter(
+                    (materiItem, _idx) => _idx !== index,
+                  ),
+                };
+              } else {
+                return item;
+              }
+            }),
+          );
+        }
+      } catch (e) {}
+    },
+    [onChange],
+  );
+
   return (
     <FlatList
       data={data}
-      renderItem={({item}) => (
+      renderItem={({item, index}) => (
         <View style={styles.item}>
           <View style={styles.itemWrapper}>
             <Text style={styles.nama_file}>{item?.originalName || ''}</Text>
@@ -96,14 +182,22 @@ export default function Materi({
             <Text style={styles.pengajar}>Pengajar: {getNamaPengajar()}</Text>
           </View>
           <View style={styles.itemIconContainer}>
-            <RectButton style={styles.iconDownload}>
+            <RectButton
+              onPress={() =>
+                downloadFile(item?.url || '', item?.originalName || '')
+              }
+              style={styles.iconDownload}>
               <MaterialIcons
                 name="cloud-download"
                 size={windowWidth * 0.04}
                 color="white"
               />
             </RectButton>
-            <RectButton style={styles.iconDelete}>
+            <RectButton
+              style={styles.iconDelete}
+              onPress={() =>
+                hapusMateriById(item?.absensipertemuan_materi_id, index)
+              }>
               <MaterialIcons
                 name="delete"
                 size={windowWidth * 0.04}

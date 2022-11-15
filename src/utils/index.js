@@ -1,10 +1,11 @@
-import {Dimensions} from 'react-native';
+import {Dimensions, Linking, PermissionsAndroid} from 'react-native';
 import {
   HeaderStyleInterpolators,
   TransitionSpecs,
 } from '@react-navigation/stack';
 import PushNotification from 'react-native-push-notification';
 import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
+import RNFetchBlob from 'rn-fetch-blob';
 
 const {width, height} = Dimensions.get('window');
 
@@ -64,6 +65,40 @@ const unsubscribeFromTopic = topics => {
   PushNotification.unsubscribeFromTopic(topics);
 };
 
+const downloadFile = async (url, originalName) => {
+  await PermissionsAndroid.check(
+    PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+  );
+  await PermissionsAndroid.check(
+    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  );
+  if (url.length > 0) {
+    const date = new Date();
+    const {config, fs} = RNFetchBlob;
+    const {DownloadDir} = fs.dirs;
+    if (DownloadDir) {
+      const options = {
+        fileCache: true,
+        addAndroidDownloads: {
+          useDownloadManager: true, // true will use native manager and be shown on notification bar.
+          notification: true,
+          path: `${DownloadDir}/sekoolah.id-${Math.floor(
+            date.getTime() + date.getSeconds() / 2,
+          )}${originalName}`,
+          description: 'Downloading file...',
+        },
+      };
+      config(options)
+        .fetch('GET', url)
+        .then(res => {
+          console.log('donwload', res.path());
+        });
+    } else {
+      Linking.openURL(url);
+    }
+  }
+};
+
 module.exports = {
   windowHeight,
   windowWidth,
@@ -75,4 +110,5 @@ module.exports = {
   scale,
   verticalScale,
   moderateScale,
+  downloadFile,
 };

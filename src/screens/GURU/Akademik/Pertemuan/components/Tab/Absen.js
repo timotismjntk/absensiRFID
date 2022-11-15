@@ -78,15 +78,17 @@ export default function Absen({data, onChange}) {
       data={data}
       nestedScrollEnabled
       ListHeaderComponent={
-        <View style={styles.checkboxHeaderContainer}>
-          <View style={styles.leftCheckboxHeader} />
-          <View style={styles.rigthCheckboxheader}>
-            <Text style={styles.checkBoxLabel}>H</Text>
-            <Text style={styles.checkBoxLabel}>S</Text>
-            <Text style={styles.checkBoxLabel}>I</Text>
-            <Text style={styles.checkBoxLabel}>A</Text>
+        data?.length > 0 ? (
+          <View style={styles.checkboxHeaderContainer}>
+            <View style={styles.leftCheckboxHeader} />
+            <View style={styles.rigthCheckboxheader}>
+              <Text style={styles.checkBoxLabel}>H</Text>
+              <Text style={styles.checkBoxLabel}>S</Text>
+              <Text style={styles.checkBoxLabel}>I</Text>
+              <Text style={styles.checkBoxLabel}>A</Text>
+            </View>
           </View>
-        </View>
+        ) : null
       }
       renderItem={({item: {nama, kehadiran, nisn}}) => (
         <View style={styles.absenItem}>
@@ -125,6 +127,9 @@ export default function Absen({data, onChange}) {
           </View>
         </View>
       )}
+      ListEmptyComponent={
+        <Text style={styles.nodata}>Tidak ada daftar Siswa tersedia...</Text>
+      }
       contentContainerStyle={styles.absenContainer}
     />
   );
@@ -145,6 +150,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: '3%',
+    marginTop: '2%',
   },
   absenNamaSiswa: {
     flex: 1,
@@ -166,6 +172,7 @@ const styles = StyleSheet.create({
   checkboxHeaderContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: '3%',
   },
   leftCheckboxHeader: {
     flex: 1,
@@ -181,5 +188,9 @@ const styles = StyleSheet.create({
   },
   checkBox: {
     flex: 1,
+  },
+  nodata: {
+    fontSize: windowWidth * 0.034,
+    color: 'black',
   },
 });

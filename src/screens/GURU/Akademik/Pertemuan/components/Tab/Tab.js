@@ -10,7 +10,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import Absen from './Absen';
 import Catatan from './Catatan';
 import Materi from './Materi';
-import LoadingModal from '../../../../../../components/LoadingModal';
 
 import {windowWidth, windowHeight} from '../../../../../../utils';
 import {getDataSiswaByKelas} from '../../../../../../redux/reducer/GURU/dataSiswa';
@@ -60,7 +59,7 @@ export default function Tab({data, mataPelajaran, pengajar}) {
   ]);
 
   const {dataSiswaByKelas = {}} = useSelector(state => state.dataSiswa) || {};
-  const {ubahPertemuanResult = {}, isLoadingUbahPertemuanResult = false} =
+  const {ubahPertemuanResult = {}} =
     useSelector(state => state.pertemuan) || {};
 
   // cari data siswa by kelas
@@ -154,7 +153,6 @@ export default function Tab({data, mataPelajaran, pengajar}) {
 
   return (
     <View style={styles.container}>
-      <LoadingModal open={isLoadingUbahPertemuanResult} close={() => null} />
       <View style={styles.tabBarsContainer}>
         {tabBars?.map((tabBar, index) => (
           <TouchableOpacity
